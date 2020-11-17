@@ -146,6 +146,7 @@ public class QuickItem {
 		for (char c : name.toCharArray()) {
 			if (Character.isLetter(c) || Character.isDigit(c)) {
 				newName.append(c);
+				System.out.println("Here!");
 			} else {
 				newName.append("_");
 			}
