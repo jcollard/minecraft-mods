@@ -1,0 +1,6 @@
+{
+  "parent": "{{PARENT}}",
+  "textures": {
+	"layer0": "basemod:items/{{TEXTURE_NAME}}"
+  }
+}
