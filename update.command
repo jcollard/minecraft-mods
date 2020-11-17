@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd -- "$(dirname "$BASH_SOURCE")"
-git pull -s theirs
+git pull -Xtheirs
