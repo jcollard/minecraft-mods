@@ -147,6 +147,6 @@ publishing {
 
 task buildResources(type: JavaExec) {
   standardInput = System.in
-  main = 'org.chadwickschool.minecraft.util.BuildResources'
+  main = 'utils.BuildResources'
   classpath = sourceSets.main.runtimeClasspath
 }
