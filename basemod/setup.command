@@ -1,4 +1,5 @@
 #/bin/bash
 cd -- "$(dirname "$BASH_SOURCE")"
-./gradlew genEclipseRuns
-./gradlew eclipse
+export JAVA_HOME=`/usr/libexec/java_home -v 1.8.0_261`
+./gradlew -g ~/.worlds_of_minecraft_cache --offline genEclipseRuns
+./gradlew -g ~/.worlds_of_minecraft_cache --offline eclipse
