@@ -144,7 +144,12 @@ public class QuickItem {
 		StringBuilder newName = new StringBuilder();
 		String name = itemName.toLowerCase();
 		for (char c : name.toCharArray()) {
-			System.out.println("Break a thing here");
+			if (Character.isLetter(c) || Character.isDigit(c)) {
+				newName.append(c);
+				System.out.println("Here!");
+			} else {
+				newName.append("_");
+			}
 		}
 		return newName.toString();
 	}
