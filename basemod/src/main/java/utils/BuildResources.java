@@ -32,12 +32,25 @@ public class BuildResources {
 		if (errors) {
 			System.err.println("\n\n\n\n");
 			System.err.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-			System.err.println("ERRORS OCCURRED WHILE BUILDING!");
+			
 			System.err.println("We tried to diagnose, here is what we found: ");
+			
+			
+
 			System.err.println();
 			for(String error : QuickItem.generateErrors) {
 				System.err.println(error);
 			}
+			System.err.println();
+			System.err.println(
+				"  ______ _____  _____   ____  _____  \n" + 
+				" |  ____|  __ \\|  __ \\ / __ \\|  __ \\ \n" + 
+				" | |__  | |__) | |__) | |  | | |__) |\n" + 
+				" |  __| |  _  /|  _  /| |  | |  _  / \n" + 
+				" | |____| | \\ \\| | \\ \\| |__| | | \\ \\ \n" + 
+				" |______|_|  \\_\\_|  \\_\\\\____/|_|  \\_\\\n"
+				);
+		System.err.println("Scroll up to see errors!");
 			System.err.println();
 			System.err.println("Press Enter to Continue.");
 			System.err.println();
