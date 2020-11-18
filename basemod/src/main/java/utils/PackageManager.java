@@ -1,102 +1,77 @@
 package utils;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 public class PackageManager {
-
+	
 	public static Set<Class<?>> loadClassesInPackage(String packageName) {  
-		Set<Class<?>> classes = new HashSet<Class<?>>();  
-		String packageNameSlashed = packageName.replace('.', '/');
-		// Get a File object for the package  
-		System.out.println("Loading Classes in Package: " + packageName);
-
-		URL directoryURL = Thread.currentThread().getContextClassLoader().getResource(packageNameSlashed);  
-
-		if (directoryURL == null) {  
-			System.out.println("Could not retrieve URL resource: " + packageNameSlashed);  
-			return classes;  
-		}  
-
-		String directoryString = directoryURL.getFile();  
-		System.out.println("Directory String: " + directoryString);
-
-
-
-		if (directoryString == null) {  
-			System.out.println("Could not find directory for URL resource: " + packageNameSlashed);  
-			return classes;  
-		}  
-
-
-		try {
-
-			// Make sure to create a file system in case of zip file.
-			Map<String, String> env = new HashMap<>(); 
-			env.put("create", "true");
-
-			Path directoryPath;
-			try {
-				directoryPath = Paths.get(directoryURL.toURI());
-			} catch (FileSystemNotFoundException e) {
-				FileSystems.newFileSystem(directoryURL.toURI(), env);
-				directoryPath = Paths.get(directoryURL.toURI());
-				System.out.println("Opened Jar File Filesystem");
-			}
-
-
-
-			Stream<Path> directoryWalker = Files.walk(directoryPath);
-
-			for(Iterator<Path> it = directoryWalker.iterator(); it.hasNext();){
-				String fileName = it.next().getFileName().toString();
-				System.out.println("File Name: " + fileName);
-				//fileName = fileName.replace('\\','.');
-				// We are only interested in .class files  
-				if (fileName.endsWith(".class")) {  
-					// Remove the .class extension  
-					fileName = fileName.substring(0, fileName.length() - 6);  
-					try {  
-						classes.add(Class.forName(packageName + "." + fileName));  
-					} catch (ClassNotFoundException e) {  
-						System.out.println(packageName + "." + fileName + " does not appear to be a valid class.");  
-					}  catch (ExceptionInInitializerError e) {
-						System.err.println(packageName + "." + fileName + " could not be initialized, skipping.");  
-					} catch (NoClassDefFoundError e){
-						System.err.println(packageName + "." + fileName + " could not be initialized, skipping.");
-					}
-				}  
-			}
-
-
-
-			directoryWalker.close();
-
-		}
-		catch( URISyntaxException e) {
-			System.out.println("Could not convert " + directoryURL + " to a file.");
-		}
-		catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		return classes;  
+		Set<Class<?>> set = new HashSet<>();
+		set.addAll(getClassesInPackage(packageName));
+		return set;
 	}
 	
+	public static final List<Class<?>> getClassesInPackage(String packageName) {
+	    String path = packageName.replaceAll("\\.", File.separator);
+	    List<Class<?>> classes = new ArrayList<>();
+	    String[] classPathEntries = System.getProperty("java.class.path").split(
+	            System.getProperty("path.separator")
+	    );
 
-	public static void main(String ... args) {
-		
+	    String name;
+	    for (String classpathEntry : classPathEntries) {
+	        if (classpathEntry.endsWith(".jar")) {
+	            File jar = new File(classpathEntry);
+	            try {
+	                @SuppressWarnings("resource")
+					JarInputStream is = new JarInputStream(new FileInputStream(jar));
+	                JarEntry entry;
+	                while((entry = is.getNextJarEntry()) != null) {
+	                    name = entry.getName();
+	                    if (name.endsWith(".class")) {
+	                        if (name.contains(path) && name.endsWith(".class")) {
+	                            String classPath = name.substring(0, entry.getName().length() - 6);
+	                            classPath = classPath.replaceAll("[\\|/]", ".");
+	                            classes.add(Class.forName(classPath));
+	                        }
+	                    }
+	                }
+	            } catch (Exception ex) {
+	                // Silence is gold
+	            }
+	        } else {
+	            try {
+	                File base = new File(classpathEntry + File.separatorChar + path);
+	                for (File file : base.listFiles()) {
+	                    name = file.getName();
+	                    if (name.endsWith(".class")) {
+	                        name = name.substring(0, name.length() - 6);
+	                        System.out.println(packageName + "." + name);
+	                        try { 
+	                        	classes.add(Class.forName(packageName + "." + name));
+	                        } catch (ClassNotFoundException e) {  
+	                        	System.out.println(packageName + "." + name + " does not appear to be a valid class.");  
+        					}  catch (ExceptionInInitializerError e) {
+        						System.err.println(packageName + "." + name + " could not be initialized, skipping.");  
+        					} catch (NoClassDefFoundError e){
+        						System.err.println(packageName + "." + name + " could not be initialized, skipping.");
+        					}
+	                    }
+	                }
+	            } catch (Exception ex) {
+	                // Silence is gold
+	            }
+	        }
+	    }
+
+	    return classes;
 	}
+
 	
 }
