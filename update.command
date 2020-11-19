@@ -1,7 +1,8 @@
 #!/bin/bash
-
+set -e
 cd -- "$(dirname "$BASH_SOURCE")"
-git checkout basemod
+git add .
+echo "Creating a backup before updating just in case!"
+git commit -m "Making backup commit before running update" > /dev/null
 git pull -Xtheirs --no-edit
-find . -type f | grep ".command$" | xargs chmod +x
-find . -type f | grep "gradlew" | xargs chmod +x
+echo "Update complete!"
