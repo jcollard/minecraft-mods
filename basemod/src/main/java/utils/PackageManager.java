@@ -30,19 +30,19 @@ public class PackageManager {
 	private static String modsPath = null;
 	
 	private static boolean findModsPath(String pathToFind, String path) {
-		LOGGER.info("Searching for " + pathToFind);
-		LOGGER.info("Searching " + path);
+		LOGGER.debug("Searching for " + pathToFind);
+		LOGGER.debug("Searching " + path);
 		if(path.contains(pathToFind)) {
-			LOGGER.info("FOUND IT!");
+			LOGGER.debug("FOUND IT!");
 			modsPath = path.substring(0, path.indexOf(pathToFind) + pathToFind.length() - "libraries".length()) + "mods" + File.separator;
-			LOGGER.info("Updating modsPath: " + modsPath);
+			LOGGER.debug("Updating modsPath: " + modsPath);
 			return true;
 		}
 		return false;
 	}
 	
 	public static final List<Class<?>> getClassesInPackage(String packageName) {
-		LOGGER.info("Searching for class packages: " + packageName);
+		LOGGER.debug("Searching for class packages: " + packageName);
 	    String path = packageName.replaceAll("\\.", File.separator);
 	    List<Class<?>> classes = new ArrayList<>();
 	    List<String> classPathEntries = new LinkedList<String>();
@@ -50,12 +50,12 @@ public class PackageManager {
 	            System.getProperty("path.separator")
 	    )));
 	    
-	    LOGGER.info("Class Path Entries: " + classPathEntries);
+	    LOGGER.debug("Class Path Entries: " + classPathEntries);
 	    
 	    String name;
 	    
 	    if (modsPath == null) {
-	    	LOGGER.info("modsPath is null, searching for libraries.");
+	    	LOGGER.debug("modsPath is null, searching for libraries.");
 	    	// Try to discover the path to minecraft mods
 	    	// TODO: This is a super hack; there has to be a better way to find
 	    	// where the mods folder is
@@ -67,10 +67,10 @@ public class PackageManager {
 	    }
 	    
 	    if (modsPath != null) {
-	    	LOGGER.info("Mods path found: " + modsPath);
+	    	LOGGER.debug("Mods path found: " + modsPath);
 	    	File pathToMod = new File(modsPath);
 	    	String[] files= pathToMod.list();
-	    	LOGGER.info("Adding Jars: " + Arrays.toString(files));
+	    	LOGGER.debug("Adding Jars: " + Arrays.toString(files));
 	    	for (String file : files) {
 	    		if (file.contains(".jar")) {
 	    			classPathEntries.add(pathToMod + File.separator + file);
