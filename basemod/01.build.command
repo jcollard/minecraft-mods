@@ -1,20 +1,20 @@
 #/bin/bash
-set +x
+set -e
 cd -- "$(dirname "$BASH_SOURCE")"
 export JAVA_HOME=`/usr/libexec/java_home -v 1.8.0_261`
-echo "Trying build with --offline mode."
-./gradlew -g ~/.worlds_of_minecraft_cache --offline buildResources
-if [ "$?" != "0" ]; then
+
+function error_cache_out_of_date {
     clear
     echo "
 
 
     
     ********************************************
-    * Build failed with offline mode.          *
+    * Your cache is out of date and needs to   *
+    * be updated. The download is ~800 MB      *
     *                                          *
-    * Press enter to try again with offline    *
-    * mode disabled.                           *
+    * Press enter to download and install the  *
+    * cache.                                   *
     *                                          *
     * Press Control + C now to stop building.  *
     ********************************************
@@ -23,5 +23,17 @@ if [ "$?" != "0" ]; then
 
     "
     read -p ""
-    ./gradlew -g ~/.worlds_of_minecraft_cache buildResources
+    source ../update.command
+    exit 0
+}
+
+MD5="$(cat ../.cache/worlds_of_minecraft_cache.zip.md5)"
+set +e
+CACHE_MD5="$(md5 -q ../.cache/worlds_of_minecraft_cache.zip)"
+set -e
+
+if [ "$MD5" != "$CACHE_MD5" ]; then
+    error_cache_out_of_date
 fi
+
+./gradlew -g ~/.worlds_of_minecraft_cache --offline buildResources
