@@ -2,6 +2,8 @@
 
 set +e
 cd -- "$(dirname "$BASH_SOURCE")"
+git config user.name "Local User"
+git config user.email local@user.com
 git add .
 echo "Creating a backup before updating just in case!"
 git commit -m "Making backup commit before running update" > /dev/null
