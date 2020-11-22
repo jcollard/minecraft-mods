@@ -108,16 +108,15 @@ if [ "$VERSION" != "$CACHE_VERSION" ]; then
 |_____|_|___|_____| |_| |__|__|_____|_____|_____|_|___|_____|
                                                              
 "
-    echo "Installing Cache..."
+    echo "Installing Cache... this may take some time."
     unzip -o "$CACHE_FILE" -d "$WORLDS_OF_MINECRAFT_PATH" > /dev/null
     set +e
-    CACHE_VERSION="$(cat $CACHE_VERSION_FILE)"
+    CACHE_VERSION="$(cat $WORLDS_OF_MINECRAFT_PATH/VERSION.txt)"
     set -e
     if [ "$VERSION" != "$CACHE_VERSION" ]; then
         echo "Cache versions did not match! Something went wrong."
         exit 1
     fi
-    echo "Done!"
 fi 
 
 clear
@@ -142,8 +141,8 @@ read -p ""
 
 cd sample-mod
 
-./gradlew -g "$WORLDS_OF_MINECRAFT_PATH" build
-cp -rf build ../../basemod/build
-./gradlew -g "$WORLDS_OF_MINECRAFT_PATH" runClient
+./gradlew -g "$WORLDS_OF_MINECRAFT_PATH" --offline build
+cp -r build ../../basemod/build
+./gradlew -g "$WORLDS_OF_MINECRAFT_PATH" --offline runClient
 
 echo "Done"
