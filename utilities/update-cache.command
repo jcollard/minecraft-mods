@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 cd -- "$(dirname "$BASH_SOURCE")"
 CACHE_PATH="../.cache"
 MD5_FILE="$CACHE_PATH/worlds_of_minecraft_cache.zip.md5"
