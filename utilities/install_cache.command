@@ -24,9 +24,10 @@ echo "██╗    ██╗ ██████╗ ██████╗ ██�
 ██║ ╚═╝ ██║██║██║ ╚████║███████╗╚██████╗██║  ██║██║  ██║██║        ██║   
 ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝   
 
-This program attempts to rebuild the cache from scratch and may take awhile to
-run as it downloads about 1.2 Gigabytes of data from various sources online. Are
-you sure you want to continue?
+This program updates your Worlds of Minecraft cache. It may take several
+minutes to download depending on your internet speed. The cache is ~600MB
+
+Are you sure you want to continue?
 
 Press enter to continue
 
