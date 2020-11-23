@@ -30,3 +30,14 @@ set -e
 if [ "$MD5" != "$CACHE_MD5" ]; then
     error_cache_out_of_date
 fi
+
+VERSION="$(cat ../.cache/VERSION.txt)"
+WORLDS_OF_MINECRAFT_PATH="/Library/worlds_of_minecraft_cache"
+
+set +e
+CACHE_VERSION="$(cat $WORLDS_OF_MINECRAFT_PATH/VERSION.txt)"
+set -e
+
+if [ "$VERSION" != "$CACHE_VERSION" ]; then
+    error_cache_out_of_date
+fi
