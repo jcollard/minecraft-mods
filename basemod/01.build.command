@@ -7,5 +7,5 @@ set +e
 FAIL=$?
 set -e
 if [ "$FAIL" != "0" ]; then
-    source utilities/check-cache.command
+    source ../utilities/check-cache.command
 fi
