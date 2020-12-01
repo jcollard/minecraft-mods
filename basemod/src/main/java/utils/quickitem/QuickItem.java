@@ -44,7 +44,7 @@ public class QuickItem {
 
 	public static List<String> generateErrors = new LinkedList<>();
 	private static List<QuickItem> items = null;
-
+	private List<QuickItem> n = new LinkedList<>();
 	/**
 	 * This method is called when generating JSON objects and creating the resources
 	 * directory.
