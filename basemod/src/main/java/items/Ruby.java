@@ -2,7 +2,6 @@ package items;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Vec3d;
 import utils.quickitem.QuickItem;
 
 public class Ruby extends QuickItem {
@@ -13,12 +12,17 @@ public class Ruby extends QuickItem {
 	}
 
 	@Override
-	public void onRightClick(PlayerEntity playerIn, Hand handIn) {
-		// Find the direction the player is facing
-		Vec3d v = playerIn.getForward();
+	public void onRightClick(PlayerEntity p, Hand handIn) {
+		debug("I am right clicking my Ruby of Flight!");
 		
-		// Move the player in the direction they are facing
-		playerIn.setVelocity(v.x, v.y, v.z);
+		// Get the x, y, and z forward vector
+		double x = p.getForward().x;
+		double y = p.getForward().y;
+		double z = p.getForward().z;
+		
+		// Set the player to move in the direction they are facing
+		p.setVelocity(x, y, z);
+		
 	}
 
 }
