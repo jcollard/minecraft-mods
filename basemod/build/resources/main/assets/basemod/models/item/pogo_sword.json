@@ -1,6 +1,6 @@
 {
-  "parent": "item/stone_sword",
+  "parent": "item/iron_sword",
   "textures": {
-	"layer0": "basemod:items/stone_sword"
+	"layer0": "basemod:items/iron_sword"
   }
 }
