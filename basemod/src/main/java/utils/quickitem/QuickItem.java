@@ -49,18 +49,14 @@ public class QuickItem {
 	 * This method is called when generating JSON objects and creating the resources
 	 * directory.
 	 */
-	public static void generateResources() {
+	public static Map<String, String> generateResources() {
 		List<QuickItem> items = QuickItem.getAllItems();
 		Map<String, String> itemMapping = new HashMap<>();
 		for (QuickItem item : items) {
 			JSONManager.generateItem(item.texture, item.getSafeRegistryName(), item);
 			itemMapping.put(item.getSafeRegistryName(), item.itemName);
 		}
-		try {
-			JSONManager.generateLangFile(itemMapping);
-		} catch (IOException io) {
-			io.printStackTrace();
-		}
+		return itemMapping;
 	}
 
 	// Memoized function for getting all items in the items package

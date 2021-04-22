@@ -98,11 +98,7 @@ public class PackageManager {
 	                }
 	            } catch (Exception ex) {
 	                // Silence is gold
-	            	System.err.println("**************************************");
-	            	System.err.println("**************************************");
-	            	System.err.println("**************************************");
-	            	System.err.println("**************************************");
-	            	System.err.println("**************************************");
+	            	System.err.println("Ignored an exception: ");
 	            	ex.printStackTrace();
 	            	
 	            }
@@ -131,11 +127,7 @@ public class PackageManager {
 	                }
 	            } catch (Exception ex) {
 	                // Silence is gold
-	            	System.err.println("**************************************");
-	            	System.err.println("**************************************");
-	            	System.err.println("**************************************");
-	            	System.err.println("**************************************");
-	            	System.err.println("**************************************");
+	            	System.err.println("Ignored an exception: ");
 	            	ex.printStackTrace();
 	            }
 	        }

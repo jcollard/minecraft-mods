@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import utils.quickblock.QuickBlockRegistry;
 import utils.quickitem.QuickItemRegistry;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -42,7 +44,12 @@ public class BaseMod
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         LOGGER.info("Constructing BaseMod");
-        QuickItemRegistry.init();
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        
+       
+        
+        QuickItemRegistry.init(bus);
+        QuickBlockRegistry.init(bus);
     }
 
     private void setup(final FMLCommonSetupEvent event)

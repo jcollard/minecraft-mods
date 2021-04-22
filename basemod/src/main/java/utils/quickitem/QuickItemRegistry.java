@@ -32,19 +32,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class QuickItemRegistry {
 	
-	private static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, BaseMod.MODID);
+	public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, BaseMod.MODID);
 	
-	public static void init() throws IOException {
+	public static void init(IEventBus bus) throws IOException {
 		for(QuickItem item : QuickItem.getAllItems()) {
 			ITEMS.register(item.getSafeRegistryName(), QuickItemBuilder.build(item));
 		}
-		ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+		ITEMS.register(bus);
 	}
 		
 	public static class QuickItemBuilder extends Item {

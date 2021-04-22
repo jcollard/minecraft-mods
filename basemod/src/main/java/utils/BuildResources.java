@@ -5,27 +5,50 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import info.ModInfo;
+import utils.quickblock.QuickBlock;
 import utils.quickitem.QuickItem;
 
 public class BuildResources {
 	
 	public static final String TEMPLATES_DIR = "utils/templates/";
 	public static final String META_INF_DIR = "src/main/resources/META-INF/";
+	public static final String RESOURCES_DIR = "src/main/resources/assets/";
 	public static final String ASSETS_DIR = "assets/";
 
 	public static void main(String[] args) throws IOException {
 
-		QuickItem.generateResources();
+List<Path> paths = new LinkedList<>();
+		
+		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/blockstates"));
+		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/lang"));
+		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/models/block"));
+		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/models/item"));
+		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/textures/blocks"));
+		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/textures/items"));
+		for(Path path : paths) {
+			Files.createDirectories(path);
+		}
+		
+		Map<String, String> itemMapping = QuickItem.generateResources();
+		Map<String, String> blockMapping = QuickBlock.generateResources();
+		JSONManager.generateLangFile(itemMapping, blockMapping);
+		
+		
 		
 		boolean errors = false;
 		
+		List<String> errorMessages = new LinkedList<>(QuickItem.generateErrors);
+		errorMessages.addAll(QuickBlock.generateErrors);
 		
-		if (!QuickItem.generateErrors.isEmpty()) {
+		
+		if (!errorMessages.isEmpty()) {
 			errors = true;
 		}
 		
@@ -38,7 +61,7 @@ public class BuildResources {
 			
 
 			System.err.println();
-			for(String error : QuickItem.generateErrors) {
+			for(String error : errorMessages) {
 				System.err.println(error);
 			}
 			System.err.println();
