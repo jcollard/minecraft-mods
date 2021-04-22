@@ -1,6 +1,6 @@
 {
   "parent": "{{PARENT}}",
   "textures": {
-	"layer0": "basemod:blocks/{{TEXTURE_NAME}}"
+	"layer0": "basemod:items/{{TEXTURE_NAME}}"
   }
 }
