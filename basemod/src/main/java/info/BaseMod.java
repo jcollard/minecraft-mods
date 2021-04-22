@@ -46,8 +46,6 @@ public class BaseMod
         LOGGER.info("Constructing BaseMod");
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         
-       
-        
         QuickItemRegistry.init(bus);
         QuickBlockRegistry.init(bus);
     }
