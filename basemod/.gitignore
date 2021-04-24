@@ -21,6 +21,9 @@ build
 eclipse
 run
 
+# Ignore generated class files
+*.class
+
 # Files from Forge MDK
 forge*changelog.txt
 
