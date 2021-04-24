@@ -21,6 +21,9 @@ build
 eclipse
 run
 
+#MAC OSX
+.DS_Store
+
 # Ignore generated class files
 *.class
 
