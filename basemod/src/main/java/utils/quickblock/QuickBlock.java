@@ -1,6 +1,5 @@
 package utils.quickblock;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,10 +11,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Block.OffsetType;
+import net.minecraft.block.Block.Properties;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.Block.OffsetType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.material.PushReaction;
@@ -28,6 +28,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -60,7 +61,6 @@ import net.minecraftforge.common.ToolType;
 import utils.JSONManager;
 import utils.PackageManager;
 import utils.quickblock.QuickBlockRegistry.QuickBlockBuilder;
-import utils.quickitem.QuickItemRegistry.QuickItemBuilder;
 
 public class QuickBlock {
 
@@ -97,11 +97,12 @@ public class QuickBlock {
 		for (Class<?> klass : classes) {
 			if (QuickBlock.class.isAssignableFrom(klass) && QuickBlock.class != klass) {
 				try {
-					QuickBlock item = (QuickBlock) klass.newInstance();
+					QuickBlock item = (QuickBlock) klass.getConstructor().newInstance();
 					if (item.include) {
 						QuickBlock.blocks.add(item);
 					}
 				} catch (Exception e) {
+					System.err.println("An exception was ignored: ");
 					e.printStackTrace();
 				} catch (NoClassDefFoundError e) {
 					QuickBlock.generateErrors.add("Could not create " + klass.getSimpleName()
@@ -151,7 +152,7 @@ public class QuickBlock {
 	 * instance of Minecraft running. This results in this method forwarding /
 	 * delegation to be necessary.
 	 */
-	private QuickBlockBuilder block;
+	private QuickBlockBuilder delegate;
 
 	/**
 	 * Generates a registry safe name to be used while generating JSON
@@ -180,576 +181,613 @@ public class QuickBlock {
 		LOGGER.debug(s);
 	}
 
-	public void initializeProperties() {
+	/**
+	 * This method is called before the {@link Block} class is created and the properties are
+	 * forwarded. 
+	 * @param p
+	 */
+	public void initializeProperties(Properties p) {
 		
 	}
 
-	public void setBlock(QuickBlockBuilder builder) {
-		this.block = builder;
+	/**
+	 * Sets the delegate {@link Block}. This should be called immediately after construction and should only be called once.
+	 * @param delegate
+	 * @throws IllegalStateException if this method is called a a second time.
+	 * @throws NullPointerException if the delegate specified is null
+	 */
+	final void setDelegate(QuickBlockBuilder delegate) {
+		if(delegate == null) {
+			throw new NullPointerException("Delegate must be non-null.");
+		}
+		if(this.delegate == null) {
+			this.delegate = delegate;
+			return;
+		}
+		throw new IllegalStateException("Cannot set the Block Delegate more than once.");
+	}
+	
+	/**
+	 * Specifies the initial Material of this Block
+	 * @return the Material to initialize this block with
+	 */
+	public Material getDefaultMaterial() {
+		return Material.IRON;
+	}
+	
+	/**
+	 * Specifies the initial DyeColor of this Block
+	 * @return the Material to initialize this block with
+	 */
+	public DyeColor getDefaultDyeColor() {
+		return DyeColor.GRAY;
 	}
 	
 	// METHODS BELOW ARE DELEGATE METHODS
 	
-	
 	public boolean canEntitySpawn(BlockState state, IBlockReader worldIn, BlockPos pos, EntityType<?> type) {
 		// TODO Auto-generated method stub
-		return this.block._canEntitySpawn(state, worldIn, pos, type);
+		return this.delegate._canEntitySpawn(state, worldIn, pos, type);
 	}
 
 	
 	public boolean isAir(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._isAir(state);
+		return this.delegate._isAir(state);
 	}
 
 	
 	public int getLightValue(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._getLightValue(state);
+		return this.delegate._getLightValue(state);
 	}
 
 	
 	public Material getMaterial(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._getMaterial(state);
+		return this.delegate._getMaterial(state);
 	}
 
 	
 	public MaterialColor getMaterialColor(BlockState state, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getMaterialColor(state, worldIn, pos);
+		return this.delegate._getMaterialColor(state, worldIn, pos);
 	}
 
 	
 	public void updateNeighbors(BlockState stateIn, IWorld worldIn, BlockPos pos, int flags) {
 		// TODO Auto-generated method stub
-		this.block._updateNeighbors(stateIn, worldIn, pos, flags);
+		this.delegate._updateNeighbors(stateIn, worldIn, pos, flags);
 	}
 
 	
 	public boolean isIn(Tag<Block> tagIn) {
 		// TODO Auto-generated method stub
-		return this.block._isIn(tagIn);
+		return this.delegate._isIn(tagIn);
 	}
 
 	
 	public void updateDiagonalNeighbors(BlockState state, IWorld worldIn, BlockPos pos, int flags) {
 		// TODO Auto-generated method stub
-		this.block._updateDiagonalNeighbors(state, worldIn, pos, flags);
+		this.delegate._updateDiagonalNeighbors(state, worldIn, pos, flags);
 	}
 
 	
 	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState,
 			IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
 		// TODO Auto-generated method stub
-		return this.block._updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+		return this.delegate._updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
 	}
 
 	
 	public BlockState rotate(BlockState state, Rotation rot) {
 		// TODO Auto-generated method stub
-		return this.block._rotate(state, rot);
+		return this.delegate._rotate(state, rot);
 	}
 
 	
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
 		// TODO Auto-generated method stub
-		return this.block._mirror(state, mirrorIn);
+		return this.delegate._mirror(state, mirrorIn);
 	}
 
 	
 	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._isNormalCube(state, worldIn, pos);
+		return this.delegate._isNormalCube(state, worldIn, pos);
 	}
 
 	
 	public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._causesSuffocation(state, worldIn, pos);
+		return this.delegate._causesSuffocation(state, worldIn, pos);
 	}
 
 	
 	public boolean isViewBlocking(BlockState state, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._isViewBlocking(state, worldIn, pos);
+		return this.delegate._isViewBlocking(state, worldIn, pos);
 	}
 
 	
 	public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
 		// TODO Auto-generated method stub
-		return this.block._allowsMovement(state, worldIn, pos, type);
+		return this.delegate._allowsMovement(state, worldIn, pos, type);
 	}
 
 	
 	public BlockRenderType getRenderType(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._getRenderType(state);
+		return this.delegate._getRenderType(state);
 	}
 
 	
 	public boolean isReplaceable(BlockState state, BlockItemUseContext useContext) {
 		// TODO Auto-generated method stub
-		return this.block._isReplaceable(state, useContext);
+		return this.delegate._isReplaceable(state, useContext);
 	}
 
 	
 	public boolean isReplaceable(BlockState p_225541_1_, Fluid p_225541_2_) {
 		// TODO Auto-generated method stub
-		return this.block._isReplaceable(p_225541_1_, p_225541_2_);
+		return this.delegate._isReplaceable(p_225541_1_, p_225541_2_);
 	}
 
 	
 	public float getBlockHardness(BlockState blockState, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getBlockHardness(blockState, worldIn, pos);
+		return this.delegate._getBlockHardness(blockState, worldIn, pos);
 	}
 
 	
 	public boolean ticksRandomly(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._ticksRandomly(state);
+		return this.delegate._ticksRandomly(state);
 	}
 
 	
 	public boolean hasTileEntity() {
 		// TODO Auto-generated method stub
-		return this.block._hasTileEntity();
+		return this.delegate._hasTileEntity();
 	}
 
 	
 	public boolean needsPostProcessing(BlockState state, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._needsPostProcessing(state, worldIn, pos);
+		return this.delegate._needsPostProcessing(state, worldIn, pos);
 	}
 
 	
 	public boolean isEmissiveRendering(BlockState p_225543_1_) {
 		// TODO Auto-generated method stub
-		return this.block._isEmissiveRendering(p_225543_1_);
+		return this.delegate._isEmissiveRendering(p_225543_1_);
 	}
 
 	
 	public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
 		// TODO Auto-generated method stub
-		return this.block._isSideInvisible(state, adjacentBlockState, side);
+		return this.delegate._isSideInvisible(state, adjacentBlockState, side);
 	}
 
 	
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
 		// TODO Auto-generated method stub
-		return this.block._getShape(state, worldIn, pos, context);
+		return this.delegate._getShape(state, worldIn, pos, context);
 	}
 
 	
 	public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos,
 			ISelectionContext context) {
 		// TODO Auto-generated method stub
-		return this.block._getCollisionShape(state, worldIn, pos, context);
+		return this.delegate._getCollisionShape(state, worldIn, pos, context);
 	}
 
 	
 	public VoxelShape getRenderShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getRenderShape(state, worldIn, pos);
+		return this.delegate._getRenderShape(state, worldIn, pos);
 	}
 
 	
 	public VoxelShape getRaytraceShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getRaytraceShape(state, worldIn, pos);
+		return this.delegate._getRaytraceShape(state, worldIn, pos);
 	}
 
 	
 	public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._propagatesSkylightDown(state, reader, pos);
+		return this.delegate._propagatesSkylightDown(state, reader, pos);
 	}
 
 	
 	public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getOpacity(state, worldIn, pos);
+		return this.delegate._getOpacity(state, worldIn, pos);
 	}
 
 	
 	public boolean isTransparent(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._isTransparent(state);
+		return this.delegate._isTransparent(state);
 	}
 
-	
-	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-		// TODO Auto-generated method stub
-		this.block._randomTick(state, worldIn, pos, random);
-	}
-
-	
-	public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {
-		// TODO Auto-generated method stub
-		this.block._tick(state, worldIn, pos, rand);
+	/**
+	 * The {@link QuickBlock#tick()} method is called on the server side randomly *if* the properties of the QuickBlock have
+	 * called {@link Properties#tickRandomly()} otherwise this method is never called.
+	 * @param state The current BlockState
+	 * @param worldIn the current ServerWorld
+	 * @param pos the current BlockPos
+	 * @param rand a reference to the Random object for convenience
+	 */
+	public void tick(BlockState state, ServerWorld serverWorld, BlockPos pos, Random rand) {
+		this.delegate._tick(state, serverWorld, pos, rand);
 	}
 
 	
 	public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
 		// TODO Auto-generated method stub
-		this.block._animateTick(stateIn, worldIn, pos, rand);
+		this.delegate._animateTick(stateIn, worldIn, pos, rand);
 	}
 
 	
 	public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
 		// TODO Auto-generated method stub
-		this.block._onPlayerDestroy(worldIn, pos, state);
+		this.delegate._onPlayerDestroy(worldIn, pos, state);
 	}
 
 	
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
 			boolean isMoving) {
 		// TODO Auto-generated method stub
-		this.block._neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+		this.delegate._neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
 	}
 
 	
 	public int tickRate(IWorldReader worldIn) {
 		// TODO Auto-generated method stub
-		return this.block._tickRate(worldIn);
+		return this.delegate._tickRate(worldIn);
 	}
 
 	
 	public INamedContainerProvider getContainer(BlockState state, World worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getContainer(state, worldIn, pos);
+		return this.delegate._getContainer(state, worldIn, pos);
 	}
 
 	
 	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
 		// TODO Auto-generated method stub
-		this.block._onBlockAdded(state, worldIn, pos, oldState, isMoving);
+		this.delegate._onBlockAdded(state, worldIn, pos, oldState, isMoving);
 	}
 
 	
 	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		// TODO Auto-generated method stub
-		this.block._onReplaced(state, worldIn, pos, newState, isMoving);
+		this.delegate._onReplaced(state, worldIn, pos, newState, isMoving);
 	}
 
 	
 	public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn,
 			BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getPlayerRelativeBlockHardness(state, player, worldIn, pos);
+		return this.delegate._getPlayerRelativeBlockHardness(state, player, worldIn, pos);
 	}
 
 	
 	public void spawnAdditionalDrops(BlockState state, World worldIn, BlockPos pos, ItemStack stack) {
 		// TODO Auto-generated method stub
-		this.block._spawnAdditionalDrops(state, worldIn, pos, stack);
+		this.delegate._spawnAdditionalDrops(state, worldIn, pos, stack);
 	}
 
 	
 	public ResourceLocation getLootTable() {
 		// TODO Auto-generated method stub
-		return this.block._getLootTable();
+		return this.delegate._getLootTable();
 	}
 
 	
 	public List<ItemStack> getDrops(BlockState state, Builder builder) {
 		// TODO Auto-generated method stub
-		return this.block._getDrops(state, builder);
+		return this.delegate._getDrops(state, builder);
 	}
 
 	
 	public void dropXpOnBlockBreak(World worldIn, BlockPos pos, int amount) {
 		// TODO Auto-generated method stub
-		this.block._dropXpOnBlockBreak(worldIn, pos, amount);
+		this.delegate._dropXpOnBlockBreak(worldIn, pos, amount);
 	}
 
 	
 	public float getExplosionResistance() {
 		// TODO Auto-generated method stub
-		return this.block._getExplosionResistance();
+		return this.delegate._getExplosionResistance();
 	}
 
 	
 	public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
 		// TODO Auto-generated method stub
-		this.block._onExplosionDestroy(worldIn, pos, explosionIn);
+		this.delegate._onExplosionDestroy(worldIn, pos, explosionIn);
 	}
 
 	
 	public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._isValidPosition(state, worldIn, pos);
+		return this.delegate._isValidPosition(state, worldIn, pos);
 	}
 
 	
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
 			Hand handIn, BlockRayTraceResult hit) {
 		// TODO Auto-generated method stub
-		return this.block._onBlockActivated(state, worldIn, pos, player, handIn, hit);
+		return this.delegate._onBlockActivated(state, worldIn, pos, player, handIn, hit);
 	}
 
 	
 	public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
 		// TODO Auto-generated method stub
-		this.block._onEntityWalk(worldIn, pos, entityIn);
+		this.delegate._onEntityWalk(worldIn, pos, entityIn);
 	}
 
 	
 	public BlockState getStateForPlacement(BlockItemUseContext context) {
 		// TODO Auto-generated method stub
-		return this.block._getStateForPlacement(context);
+		return this.delegate._getStateForPlacement(context);
 	}
 
 	
 	public void onBlockClicked(BlockState state, World worldIn, BlockPos pos, PlayerEntity player) {
 		// TODO Auto-generated method stub
-		this.block._onBlockClicked(state, worldIn, pos, player);
+		this.delegate._onBlockClicked(state, worldIn, pos, player);
 	}
 
 	
 	public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
 		// TODO Auto-generated method stub
-		return this.block._getWeakPower(blockState, blockAccess, pos, side);
+		return this.delegate._getWeakPower(blockState, blockAccess, pos, side);
 	}
 
 	
 	public boolean canProvidePower(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._canProvidePower(state);
+		return this.delegate._canProvidePower(state);
 	}
 
 	
 	public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
 		// TODO Auto-generated method stub
-		this.block._onEntityCollision(state, worldIn, pos, entityIn);
+		this.delegate._onEntityCollision(state, worldIn, pos, entityIn);
 	}
 
 	
 	public int getStrongPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
 		// TODO Auto-generated method stub
-		return this.block._getStrongPower(blockState, blockAccess, pos, side);
+		return this.delegate._getStrongPower(blockState, blockAccess, pos, side);
 	}
 
 	
 	public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, TileEntity te,
 			ItemStack stack) {
 		// TODO Auto-generated method stub
-		this.block._harvestBlock(worldIn, player, pos, state, te, stack);
+		this.delegate._harvestBlock(worldIn, player, pos, state, te, stack);
 	}
 
 	
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer,
 			ItemStack stack) {
 		// TODO Auto-generated method stub
-		this.block._onBlockPlacedBy(worldIn, pos, state, placer, stack);
+		this.delegate._onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}
 
 	
 	public boolean canSpawnInBlock() {
 		// TODO Auto-generated method stub
-		return this.block._canSpawnInBlock();
+		return this.delegate._canSpawnInBlock();
 	}
 
 	
 	public ITextComponent getNameTextComponent() {
 		// TODO Auto-generated method stub
-		return this.block._getNameTextComponent();
+		return this.delegate._getNameTextComponent();
 	}
 
 	
 	public String getTranslationKey() {
 		// TODO Auto-generated method stub
-		return this.block._getTranslationKey();
+		return this.delegate._getTranslationKey();
 	}
 
 	
 	public boolean eventReceived(BlockState state, World worldIn, BlockPos pos, int id, int param) {
 		// TODO Auto-generated method stub
-		return this.block._eventReceived(state, worldIn, pos, id, param);
+		return this.delegate._eventReceived(state, worldIn, pos, id, param);
 	}
 
 	
 	public PushReaction getPushReaction(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._getPushReaction(state);
+		return this.delegate._getPushReaction(state);
 	}
 
 	
 	public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getAmbientOcclusionLightValue(state, worldIn, pos);
+		return this.delegate._getAmbientOcclusionLightValue(state, worldIn, pos);
 	}
 
 	
 	public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance) {
 		// TODO Auto-generated method stub
-		this.block._onFallenUpon(worldIn, pos, entityIn, fallDistance);
+		this.delegate._onFallenUpon(worldIn, pos, entityIn, fallDistance);
 	}
 
 	
 	public void onLanded(IBlockReader worldIn, Entity entityIn) {
 		// TODO Auto-generated method stub
-		this.block._onLanded(worldIn, entityIn);
+		this.delegate._onLanded(worldIn, entityIn);
 	}
 
 	
 	public ItemStack getItem(IBlockReader worldIn, BlockPos pos, BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._getItem(worldIn, pos, state);
+		return this.delegate._getItem(worldIn, pos, state);
 	}
 
 	
 	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
 		// TODO Auto-generated method stub
-		this.block._fillItemGroup(group, items);
+		this.delegate._fillItemGroup(group, items);
 	}
 
 	
 	public IFluidState getFluidState(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._getFluidState(state);
+		return this.delegate._getFluidState(state);
 	}
 
 	
 	public float getSlipperiness() {
 		// TODO Auto-generated method stub
-		return this.block._getSlipperiness();
+		return this.delegate._getSlipperiness();
 	}
 
 	
 	public float getSpeedFactor() {
 		// TODO Auto-generated method stub
-		return this.block._getSpeedFactor();
+		return this.delegate._getSpeedFactor();
 	}
 
 	
 	public float getJumpFactor() {
 		// TODO Auto-generated method stub
-		return this.block._getJumpFactor();
+		return this.delegate._getJumpFactor();
 	}
 
 	
 	public long getPositionRandom(BlockState state, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getPositionRandom(state, pos);
+		return this.delegate._getPositionRandom(state, pos);
 	}
 
 	
 	public void onProjectileCollision(World worldIn, BlockState state, BlockRayTraceResult hit, Entity projectile) {
 		// TODO Auto-generated method stub
-		this.block._onProjectileCollision(worldIn, state, hit, projectile);
+		this.delegate._onProjectileCollision(worldIn, state, hit, projectile);
 	}
 
 	
 	public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
 		// TODO Auto-generated method stub
-		this.block._onBlockHarvested(worldIn, pos, state, player);
+		this.delegate._onBlockHarvested(worldIn, pos, state, player);
 	}
 
 	
 	public void fillWithRain(World worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		this.block._fillWithRain(worldIn, pos);
+		this.delegate._fillWithRain(worldIn, pos);
 	}
 
 	
 	public boolean canDropFromExplosion(Explosion explosionIn) {
 		// TODO Auto-generated method stub
-		return this.block._canDropFromExplosion(explosionIn);
+		return this.delegate._canDropFromExplosion(explosionIn);
 	}
 
 	
 	public boolean hasComparatorInputOverride(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._hasComparatorInputOverride(state);
+		return this.delegate._hasComparatorInputOverride(state);
 	}
 
 	
 	public int getComparatorInputOverride(BlockState blockState, World worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getComparatorInputOverride(blockState, worldIn, pos);
+		return this.delegate._getComparatorInputOverride(blockState, worldIn, pos);
 	}
 
 	
 	protected void fillStateContainer(net.minecraft.state.StateContainer.Builder<Block, BlockState> builder) {
 		// TODO Auto-generated method stub
-		this.block._fillStateContainer(builder);
+		this.delegate._fillStateContainer(builder);
 	}
 
 	
 	public StateContainer<Block, BlockState> getStateContainer() {
 		// TODO Auto-generated method stub
-		return this.block._getStateContainer();
+		return this.delegate._getStateContainer();
 	}
 
 	
 	public OffsetType getOffsetType() {
 		// TODO Auto-generated method stub
-		return this.block._getOffsetType();
+		return this.delegate._getOffsetType();
 	}
 
 	
 	public Vec3d getOffset(BlockState state, IBlockReader worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
-		return this.block._getOffset(state, worldIn, pos);
+		return this.delegate._getOffset(state, worldIn, pos);
 	}
 
 	
 	public SoundType getSoundType(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._getSoundType(state);
+		return this.delegate._getSoundType(state);
 	}
 
 	
 	public Item asItem() {
 		// TODO Auto-generated method stub
-		return this.block._asItem();
+		return this.delegate._asItem();
 	}
 
 	
 	public boolean isVariableOpacity() {
 		// TODO Auto-generated method stub
-		return this.block._isVariableOpacity();
+		return this.delegate._isVariableOpacity();
 	}
 
 	
 	public String toString() {
 		// TODO Auto-generated method stub
-		return this.block._toString();
+		return this.delegate._toString();
 	}
 
 	
 	public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip,
 			ITooltipFlag flagIn) {
 		// TODO Auto-generated method stub
-		this.block._addInformation(stack, worldIn, tooltip, flagIn);
+		this.delegate._addInformation(stack, worldIn, tooltip, flagIn);
 	}
 
 	
 	public float getSlipperiness(BlockState state, IWorldReader world, BlockPos pos, Entity entity) {
 		// TODO Auto-generated method stub
-		return this.block._getSlipperiness(state, world, pos, entity);
+		return this.delegate._getSlipperiness(state, world, pos, entity);
 	}
 
 	
 	public ToolType getHarvestTool(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._getHarvestTool(state);
+		return this.delegate._getHarvestTool(state);
 	}
 
 	
 	public int getHarvestLevel(BlockState state) {
 		// TODO Auto-generated method stub
-		return this.block._getHarvestLevel(state);
+		return this.delegate._getHarvestLevel(state);
 	}
 
 	
 	public boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos pos, Direction facing,
 			IPlantable plantable) {
 		// TODO Auto-generated method stub
-		return this.block._canSustainPlant(state, world, pos, facing, plantable);
+		return this.delegate._canSustainPlant(state, world, pos, facing, plantable);
 	}
+
+	
+
+	
 
 
 }

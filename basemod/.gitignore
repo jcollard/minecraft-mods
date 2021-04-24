@@ -28,4 +28,6 @@ run
 forge*changelog.txt
 
 src/main/java/items/
+src/main/java/blocks/
 src/main/resources/
+assets/textures
