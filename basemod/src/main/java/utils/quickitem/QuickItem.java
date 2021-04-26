@@ -1,6 +1,5 @@
 package utils.quickitem;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,7 +74,7 @@ public class QuickItem {
 		for (Class<?> klass : classes) {
 			if (QuickItem.class.isAssignableFrom(klass) && QuickItem.class != klass) {
 				try {
-					QuickItem item = (QuickItem) klass.newInstance();
+					QuickItem item = (QuickItem) klass.getConstructor().newInstance();
 					if (item.include) {
 						QuickItem.items.add(item);
 					}

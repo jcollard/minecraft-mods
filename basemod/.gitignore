@@ -21,8 +21,16 @@ build
 eclipse
 run
 
+#MAC OSX
+.DS_Store
+
+# Ignore generated class files
+*.class
+
 # Files from Forge MDK
 forge*changelog.txt
 
 src/main/java/items/
+src/main/java/blocks/
 src/main/resources/
+assets/textures

@@ -2,7 +2,6 @@ package utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,8 +13,6 @@ import java.util.jar.JarInputStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.google.common.io.PatternFilenameFilter;
 
 public class PackageManager {
 	
@@ -56,7 +53,8 @@ public class PackageManager {
 	    
 	    if (modsPath == null) {
 	    	LOGGER.debug("modsPath is null, searching for libraries.");
-	    	// Try to discover the path to minecraft mods
+	    	// Try to discover the path to minecraft mods. This makes it so the mod
+	    	// will work as a jar file in the minecraft mods folder.
 	    	// TODO: This is a super hack; there has to be a better way to find
 	    	// where the mods folder is
 	    	for (String classpathEntry : classPathEntries) {

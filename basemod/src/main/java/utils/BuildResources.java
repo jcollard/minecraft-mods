@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,7 @@ List<Path> paths = new LinkedList<>();
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/models/item"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/textures/blocks"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/textures/items"));
+		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "../META-INF"));
 		for(Path path : paths) {
 			Files.createDirectories(path);
 		}
@@ -101,8 +103,12 @@ List<Path> paths = new LinkedList<>();
 		}
 		
 		Path infoFile = Paths.get(".").resolve(META_INF_DIR + "mods.toml");
+		Files.deleteIfExists(infoFile);
 		Files.write(infoFile, newLines.toString().getBytes(), StandardOpenOption.CREATE);
 		
+		Path packFile = Paths.get(".").resolve(RESOURCES_DIR + "../pack.mcmeta");
+		Path packFileTemplate = Paths.get(".").resolve(TEMPLATES_DIR + "pack.mcmeta.template");
+		Files.copy(packFileTemplate, packFile, StandardCopyOption.REPLACE_EXISTING);
 	}
 
 }
