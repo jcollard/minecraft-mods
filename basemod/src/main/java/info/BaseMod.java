@@ -20,6 +20,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import utils.quickarmor.QuickArmorRegistry;
 import utils.quickblock.QuickBlockRegistry;
 import utils.quickitem.QuickItemRegistry;
 
@@ -36,8 +37,8 @@ public class BaseMod
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         // Register the enqueueIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
-        // Register the processIMC method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+		// Register the processIMC method for modloading
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 
@@ -47,7 +48,9 @@ public class BaseMod
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         
         QuickItemRegistry.init(bus);
+        QuickArmorRegistry.init(bus);
         QuickBlockRegistry.init(bus);
+
     }
 
     private void setup(final FMLCommonSetupEvent event)
