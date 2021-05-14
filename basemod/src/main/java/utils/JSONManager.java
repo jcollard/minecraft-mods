@@ -248,7 +248,7 @@ public class JSONManager {
 		// Create the Armor Model Texture
 		
 		Path textureFile = Paths.get(".").resolve(texturesDir + armor.getTexture() + "_layer_1.png");
-		Path targetTexturePath = Paths.get(".").resolve(assetsDir + "models/armor/" + armor.getTexture() + "_layer_1.png");
+		Path targetTexturePath = Paths.get(".").resolve(assetsDir + "textures/models/armor/" + armor.getTexture() + "_layer_1.png");
 		try {
 			Files.deleteIfExists(targetTexturePath);
 			Files.copy(textureFile, targetTexturePath, StandardCopyOption.REPLACE_EXISTING);
@@ -259,7 +259,7 @@ public class JSONManager {
 		}
 		
 		textureFile = Paths.get(".").resolve(texturesDir + armor.getTexture() + "_layer_2.png");
-		targetTexturePath = Paths.get(".").resolve(assetsDir + "models/armor/" + armor.getTexture() + "_layer_2.png");
+		targetTexturePath = Paths.get(".").resolve(assetsDir + "textures/models/armor/" + armor.getTexture() + "_layer_2.png");
 		try {
 			Files.deleteIfExists(targetTexturePath);
 			Files.copy(textureFile, targetTexturePath, StandardCopyOption.REPLACE_EXISTING);

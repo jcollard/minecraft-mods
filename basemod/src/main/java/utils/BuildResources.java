@@ -32,7 +32,7 @@ List<Path> paths = new LinkedList<>();
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/lang"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/models/block"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/models/item"));
-		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/models/armor"));
+		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/textures/models/armor"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/textures/blocks"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/textures/items"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "../META-INF"));
@@ -41,7 +41,7 @@ List<Path> paths = new LinkedList<>();
 		}
 		
 		Map<String, String> itemMapping = QuickItem.generateResources();
-		Map<String, String> armorMapping = QuickArmor.generateResources();
+		itemMapping.putAll(QuickArmor.generateResources());
 		Map<String, String> blockMapping = QuickBlock.generateResources();
 		JSONManager.generateLangFile(itemMapping, blockMapping);
 		

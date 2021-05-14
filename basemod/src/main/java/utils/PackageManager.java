@@ -33,6 +33,7 @@ public class PackageManager {
 			LOGGER.debug("FOUND IT!");
 			modsPath = path.substring(0, path.indexOf(pathToFind) + pathToFind.length() - "libraries".length()) + "mods" + File.separator;
 			LOGGER.debug("Updating modsPath: " + modsPath);
+			System.out.println("Updating modsPath: " + modsPath);
 			return true;
 		}
 		return false;
@@ -87,8 +88,11 @@ public class PackageManager {
 	                while((entry = is.getNextJarEntry()) != null) {
 	                    name = entry.getName();
 	                    if (name.endsWith(".class")) {
-	                        if (name.contains(path) && name.endsWith(".class")) {
-	                            String classPath = name.substring(0, entry.getName().length() - 6);
+	                        if (!name.contains("net/minecraft") && 
+	                        		name.contains(path) && 
+	                        		name.endsWith(".class")) {
+	                            System.out.println("Found class: " + name + " path: " + path);
+	                        	String classPath = name.substring(0, entry.getName().length() - 6);
 	                            classPath = classPath.replaceAll("[\\|/]", ".");
 	                            classes.add(Class.forName(classPath));
 	                        }

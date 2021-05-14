@@ -22,7 +22,7 @@ import utils.quickitem.QuickItem;
 
 public class QuickArmor {
 	
-	public static List<String> generateErrors;
+	public static List<String> generateErrors = new LinkedList<>();
 	private static List<QuickArmor> armor = null;
 
 	/**
@@ -30,9 +30,10 @@ public class QuickArmor {
 	 * directory.
 	 */
 	public static Map<String, String> generateResources() {
-		//TODO Generate item for each armor piece
+		List<QuickArmor> all = QuickArmor.getAll();
+		System.out.println("Generating Armor Resources for " + all.size() + " QuickArmor classes.");
 		Map<String, String> itemMapping = new HashMap<>();
-		for (QuickArmor armor : QuickArmor.getAll()) {
+		for (QuickArmor armor : all) {
 			JSONManager.generateArmor(armor);
 			itemMapping.put(armor.getSafeRegistryName() + "_chest", armor.chestName);
 			itemMapping.put(armor.getSafeRegistryName() + "_legs", armor.legsName);
@@ -54,9 +55,9 @@ public class QuickArmor {
 			return QuickArmor.armor;
 		}
 		QuickArmor.armor = new LinkedList<>();
-		Set<Class<?>> classes = PackageManager.loadClassesInPackage("armor");		
+		Set<Class<?>> classes = PackageManager.loadClassesInPackage("armor");
 		for (Class<?> klass : classes) {
-			if (QuickItem.class.isAssignableFrom(klass) && QuickArmor.class != klass) {
+			if (QuickArmor.class.isAssignableFrom(klass) && QuickArmor.class != klass) {
 				try {
 					QuickArmor armor = (QuickArmor) klass.getConstructor().newInstance();
 					if (armor.include) {
@@ -78,8 +79,8 @@ public class QuickArmor {
 	protected int durability = 10;
 	protected int enchantability = 0;
 	protected Map<EquipmentSlotType, Integer> durabilities = new TreeMap<>();
-	protected SoundEvent soundEvent = SoundEvents.BLOCK_METAL_BREAK;
-	protected Set<Item> repairMaterials = new TreeSet<>();
+	//protected SoundEvent soundEvent = SoundEvents.BLOCK_METAL_BREAK;
+	//protected Set<Item> repairMaterials = new TreeSet<>();
 	protected float toughness = 1.0F;
 	protected String texture = null;
 	protected String chestName = null;
@@ -102,7 +103,8 @@ public class QuickArmor {
 
 	public String getSafeRegistryName() {
 		StringBuilder newName = new StringBuilder();
-		String name = chestName.toLowerCase();
+		//TODO Consider using class name?
+		String name = texture.toLowerCase();
 		for (char c : name.toCharArray()) {
 			if (Character.isLetter(c) || Character.isDigit(c)) {
 				newName.append(c);
@@ -148,7 +150,7 @@ public class QuickArmor {
 			this.durability = quickArmor.durability;
 			this.enchantability = quickArmor.enchantability;
 			this.durabilities = Collections.unmodifiableMap(quickArmor.durabilities);
-			this.soundEvent = quickArmor.soundEvent;
+			this.soundEvent = quickArmor.getSoundEvent();
 			// TODO: Implement from builder.repairMaterials
 			this.repairMaterial = Ingredient.fromItems();
 			this.name = quickArmor.getSafeRegistryName();
@@ -209,12 +211,12 @@ public class QuickArmor {
 
 
 	public SoundEvent getSoundEvent() {
-		return soundEvent;
+		return SoundEvents.BLOCK_METAL_BREAK;
 	}
 
 
 	public Set<Item> getRepairMaterials() {
-		return repairMaterials;
+		return new TreeSet<>();
 	}
 
 

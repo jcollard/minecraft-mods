@@ -19,7 +19,7 @@ public class QuickArmorRegistry {
 	public static final DeferredRegister<Item> ARMOR = new DeferredRegister<>(ForgeRegistries.ITEMS, BaseMod.MODID);
 	
 	public static void init(IEventBus bus) throws IOException {
-		for(QuickArmor armor : QuickArmor.getAllArmor()) {
+		for(QuickArmor armor : QuickArmor.getAll()) {
 			for(ArmorRegistryItem item : QuickArmorBuilder.build(armor)) {
 				ARMOR.register(item.name, item.supplier);
 			}
