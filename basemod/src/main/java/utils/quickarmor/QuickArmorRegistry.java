@@ -10,6 +10,7 @@ import info.BaseMod;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -40,17 +41,19 @@ public class QuickArmorRegistry {
 
 		public static List<ArmorRegistryItem> build(QuickArmor armor) {
 			Properties p = new Item.Properties();
+			p.group(ItemGroup.COMBAT);
 			armor.initializeProperties(p);
 			
 			List<ArmorRegistryItem> items = new LinkedList<>();
+			//TODO: Probably should normalize these strings throughout the code to variables
 			Supplier<Item> s = () -> new ArmorItem(armor.getMaterial(), EquipmentSlotType.CHEST, p); 
-			items.add(new ArmorRegistryItem(s, armor.getSafeRegistryName() + "_chest"));
+			items.add(new ArmorRegistryItem(s, armor.getSafeRegistryName() + "_chestplate"));
 			s =() -> new ArmorItem(armor.getMaterial(), EquipmentSlotType.LEGS, p);
-			items.add(new ArmorRegistryItem(s, armor.getSafeRegistryName() + "_legs"));
+			items.add(new ArmorRegistryItem(s, armor.getSafeRegistryName() + "_leggings"));
 			s = () -> new ArmorItem(armor.getMaterial(), EquipmentSlotType.FEET, p);
-			items.add(new ArmorRegistryItem(s, armor.getSafeRegistryName() + "_feet"));
+			items.add(new ArmorRegistryItem(s, armor.getSafeRegistryName() + "_boots"));
 			s = () -> new ArmorItem(armor.getMaterial(), EquipmentSlotType.HEAD, p);
-			items.add(new ArmorRegistryItem(s, armor.getSafeRegistryName() + "_head"));
+			items.add(new ArmorRegistryItem(s, armor.getSafeRegistryName() + "_helmet"));
 			return items;
 		}
 		

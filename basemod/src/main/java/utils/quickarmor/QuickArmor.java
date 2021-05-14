@@ -35,10 +35,10 @@ public class QuickArmor {
 		Map<String, String> itemMapping = new HashMap<>();
 		for (QuickArmor armor : all) {
 			JSONManager.generateArmor(armor);
-			itemMapping.put(armor.getSafeRegistryName() + "_chest", armor.chestName);
-			itemMapping.put(armor.getSafeRegistryName() + "_legs", armor.legsName);
-			itemMapping.put(armor.getSafeRegistryName() + "_head", armor.headName);
-			itemMapping.put(armor.getSafeRegistryName() + "_feet", armor.feetName);
+			itemMapping.put(armor.getSafeRegistryName() + "_chestplate", armor.chestName);
+			itemMapping.put(armor.getSafeRegistryName() + "_leggings", armor.legsName);
+			itemMapping.put(armor.getSafeRegistryName() + "_helmet", armor.headName);
+			itemMapping.put(armor.getSafeRegistryName() + "_boots", armor.feetName);
 		}
 		return itemMapping;
 	}
@@ -60,7 +60,7 @@ public class QuickArmor {
 			if (QuickArmor.class.isAssignableFrom(klass) && QuickArmor.class != klass) {
 				try {
 					QuickArmor armor = (QuickArmor) klass.getConstructor().newInstance();
-					if (armor.include) {
+					if (armor.enabled) {
 						QuickArmor.armor.add(armor);
 					}
 				} catch (Exception e) {
@@ -75,10 +75,10 @@ public class QuickArmor {
 		return QuickArmor.getAll();
 	}
 	
-	protected boolean include = true;
+	protected boolean enabled = true;
 	protected int durability = 10;
 	protected int enchantability = 0;
-	protected Map<EquipmentSlotType, Integer> durabilities = new TreeMap<>();
+	protected Map<EquipmentSlotType, Integer> armorValue = new TreeMap<>();
 	//protected SoundEvent soundEvent = SoundEvents.BLOCK_METAL_BREAK;
 	//protected Set<Item> repairMaterials = new TreeSet<>();
 	protected float toughness = 1.0F;
@@ -87,24 +87,24 @@ public class QuickArmor {
 	protected String legsName = null;
 	protected String headName = null;
 	protected String feetName = null;
-	protected String textureChest = null;
-	protected String textureHead = null;
-	protected String textureLegs = null;
-	protected String textureFeet = null;
+	protected String textureChestplate = null;
+	protected String textureHelmet = null;
+	protected String textureLeggings = null;
+	protected String textureBoots = null;
 	
 	protected String parentModel = "item/generated";
 
 	{
-		durabilities.put(EquipmentSlotType.CHEST, 1);
-		durabilities.put(EquipmentSlotType.FEET, 1);
-		durabilities.put(EquipmentSlotType.HEAD, 1);
-		durabilities.put(EquipmentSlotType.LEGS, 1);
+		armorValue.put(EquipmentSlotType.CHEST, 1);
+		armorValue.put(EquipmentSlotType.FEET, 1);
+		armorValue.put(EquipmentSlotType.HEAD, 1);
+		armorValue.put(EquipmentSlotType.LEGS, 1);
 	}
 
 	public String getSafeRegistryName() {
 		StringBuilder newName = new StringBuilder();
 		//TODO Consider using class name?
-		String name = texture.toLowerCase();
+		String name = this.getClass().getSimpleName().toLowerCase();
 		for (char c : name.toCharArray()) {
 			if (Character.isLetter(c) || Character.isDigit(c)) {
 				newName.append(c);
@@ -138,34 +138,37 @@ public class QuickArmor {
 
 	private static class QuickArmorMaterial implements IArmorMaterial {
 
-		private final int durability;
+		private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
+		private final int maxDamageFactor;
 		private final int enchantability;
-		private final Map<EquipmentSlotType, Integer> durabilities;
+		private final Map<EquipmentSlotType, Integer> damageReductionAmount;
 		private final SoundEvent soundEvent;
 		private final Ingredient repairMaterial;
 		private final String name;
 		private final float toughness;
 
 		public QuickArmorMaterial(QuickArmor quickArmor) {
-			this.durability = quickArmor.durability;
+			this.maxDamageFactor = quickArmor.durability;
 			this.enchantability = quickArmor.enchantability;
-			this.durabilities = Collections.unmodifiableMap(quickArmor.durabilities);
+			this.damageReductionAmount = Collections.unmodifiableMap(quickArmor.armorValue);
 			this.soundEvent = quickArmor.getSoundEvent();
 			// TODO: Implement from builder.repairMaterials
 			this.repairMaterial = Ingredient.fromItems();
-			this.name = quickArmor.getSafeRegistryName();
+			this.name = "basemod:" + quickArmor.getSafeRegistryName();
 			this.toughness = quickArmor.toughness;
+			System.out.println();
+			System.out.println("Created Material for " + this.name);
 
 		}
 
 		@Override
 		public int getDurability(EquipmentSlotType slotIn) {
-			return this.durability;
+			return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * this.maxDamageFactor;
 		}
 
 		@Override
 		public int getDamageReductionAmount(EquipmentSlotType slotIn) {
-			return this.durabilities.get(slotIn);
+			return this.damageReductionAmount.get(slotIn);
 		}
 
 		@Override
@@ -206,7 +209,7 @@ public class QuickArmor {
 
 
 	public Map<EquipmentSlotType, Integer> getDurabilities() {
-		return durabilities;
+		return armorValue;
 	}
 
 
@@ -251,22 +254,22 @@ public class QuickArmor {
 
 
 	public String getTextureChest() {
-		return textureChest;
+		return textureChestplate;
 	}
 
 
 	public String getTextureHead() {
-		return textureHead;
+		return textureHelmet;
 	}
 
 
 	public String getTextureLegs() {
-		return textureLegs;
+		return textureLeggings;
 	}
 
 
 	public String getTextureFeet() {
-		return textureFeet;
+		return textureBoots;
 	}
 
 }

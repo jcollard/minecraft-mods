@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import com.mojang.datafixers.util.Pair;
-
 import utils.quickarmor.QuickArmor;
 import utils.quickblock.QuickBlock;
 import utils.quickitem.QuickItem;
@@ -206,10 +204,10 @@ public class JSONManager {
 		}
 		
 		List<String[]> itemEntries = new LinkedList<>();
-		itemEntries.add(new String[] {armor.getTextureChest(), armor.getSafeRegistryName() + "_chest"});
-		itemEntries.add(new String[] {armor.getTextureHead(), armor.getSafeRegistryName() + "_head"});
-		itemEntries.add(new String[] {armor.getTextureFeet(), armor.getSafeRegistryName() + "_feet"});
-		itemEntries.add(new String[] {armor.getTextureLegs(), armor.getSafeRegistryName() + "_legs"});
+		itemEntries.add(new String[] {armor.getTextureChest(), armor.getSafeRegistryName() + "_chestplate"});
+		itemEntries.add(new String[] {armor.getTextureHead(), armor.getSafeRegistryName() + "_helmet"});
+		itemEntries.add(new String[] {armor.getTextureFeet(), armor.getSafeRegistryName() + "_boots"});
+		itemEntries.add(new String[] {armor.getTextureLegs(), armor.getSafeRegistryName() + "_leggings"});
 
 		
 		//Create each item (chest, head, feet, legs)
@@ -248,7 +246,7 @@ public class JSONManager {
 		// Create the Armor Model Texture
 		
 		Path textureFile = Paths.get(".").resolve(texturesDir + armor.getTexture() + "_layer_1.png");
-		Path targetTexturePath = Paths.get(".").resolve(assetsDir + "textures/models/armor/" + armor.getTexture() + "_layer_1.png");
+		Path targetTexturePath = Paths.get(".").resolve(assetsDir + "textures/models/armor/" + armor.getSafeRegistryName() + "_layer_1.png");
 		try {
 			Files.deleteIfExists(targetTexturePath);
 			Files.copy(textureFile, targetTexturePath, StandardCopyOption.REPLACE_EXISTING);
@@ -259,7 +257,7 @@ public class JSONManager {
 		}
 		
 		textureFile = Paths.get(".").resolve(texturesDir + armor.getTexture() + "_layer_2.png");
-		targetTexturePath = Paths.get(".").resolve(assetsDir + "textures/models/armor/" + armor.getTexture() + "_layer_2.png");
+		targetTexturePath = Paths.get(".").resolve(assetsDir + "textures/models/armor/" + armor.getSafeRegistryName() + "_layer_2.png");
 		try {
 			Files.deleteIfExists(targetTexturePath);
 			Files.copy(textureFile, targetTexturePath, StandardCopyOption.REPLACE_EXISTING);
