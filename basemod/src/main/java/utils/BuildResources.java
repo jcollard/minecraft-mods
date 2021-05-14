@@ -13,6 +13,7 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import info.ModInfo;
+import utils.quickarmor.QuickArmor;
 import utils.quickblock.QuickBlock;
 import utils.quickitem.QuickItem;
 
@@ -31,6 +32,7 @@ List<Path> paths = new LinkedList<>();
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/lang"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/models/block"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/models/item"));
+		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/models/armor"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/textures/blocks"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "basemod/textures/items"));
 		paths.add(Paths.get(".").resolve(RESOURCES_DIR + "../META-INF"));
@@ -39,6 +41,7 @@ List<Path> paths = new LinkedList<>();
 		}
 		
 		Map<String, String> itemMapping = QuickItem.generateResources();
+		Map<String, String> armorMapping = QuickArmor.generateResources();
 		Map<String, String> blockMapping = QuickBlock.generateResources();
 		JSONManager.generateLangFile(itemMapping, blockMapping);
 		
@@ -48,6 +51,7 @@ List<Path> paths = new LinkedList<>();
 		
 		List<String> errorMessages = new LinkedList<>(QuickItem.generateErrors);
 		errorMessages.addAll(QuickBlock.generateErrors);
+		errorMessages.addAll(QuickArmor.generateErrors);
 		
 		
 		if (!errorMessages.isEmpty()) {
